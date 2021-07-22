@@ -1,0 +1,20 @@
+#jinja2:trim_blocks: False
+
+- hosts: HOST_GROUP_NAME
+  gather_facts: false
+  vars:
+    outputDir: DIRECTORY_NAME
+  tasks:
+  - name: "Run commands"
+    cli_command:
+      command: "{{ item }}"
+    loop:    
+      - terminal length 0
+      - show interface desc
+      - show ip interface brief
+    register: result
+
+  - name: save result
+    copy:
+      content: "{{result.results | map(attribute='stdout') | list | join('\n\n')}}" 
+      dest: "{{outputDir}}/{{inventory_hostname}}.txt"
